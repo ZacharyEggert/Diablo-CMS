@@ -8,7 +8,7 @@ import {
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { Options } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { User } from './entities/User';
+import { User } from '@entities/User';
 
 const MikroOrmConfig: Options<PostgreSqlDriver> = {
     entities: [User],

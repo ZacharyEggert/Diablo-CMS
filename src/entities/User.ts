@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
 export class User {
-    @PrimaryKey()
+    @PrimaryKey({})
     id!: number;
 
     @Property({ unique: true, nullable: false })
@@ -13,4 +13,7 @@ export class User {
 
     @Property({ default: false, nullable: false })
     accessRevoked!: boolean;
+
+    @Property({ nullable: false })
+    email!: string;
 }

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './moduleAlias';
 
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
@@ -8,7 +9,7 @@ dotenv.config();
 
 import express from 'express';
 
-import router from './routes';
+import router from '@routes';
 import MikroOrmConfig from './mikro-orm.config';
 import { PORT } from './constants';
 
