@@ -1,10 +1,17 @@
+import {
+    createUser,
+    deleteUser,
+    getAllUsers,
+    getUser,
+} from '@controllers/user';
 import { Router } from 'express';
-import listingRouter from './listing';
-import userRouter from './user';
 
-const router = Router();
+const userRouter = Router();
 
-router.use('/user', userRouter);
-router.use('/listing', listingRouter);
+userRouter.get('/', getAllUsers);
+userRouter.get('/:id', getUser);
 
-export default router;
+userRouter.post('/', createUser);
+userRouter.delete('/:id', deleteUser);
+
+export default userRouter;
