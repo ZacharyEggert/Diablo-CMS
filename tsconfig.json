@@ -3,7 +3,7 @@
         "target": "esnext",
         "module": "CommonJS",
         "jsx": "preserve",
-        "lib": ["ESNext"],
+        "lib": ["ESNext", "ES5", "ES6"],
         "baseUrl": ".",
         "paths": {
             // "@components/*": ["src/components/*"],
@@ -33,6 +33,8 @@
         "resolveJsonModule": true,
         "incremental": true,
         "outDir": "./out",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
     }
 }
