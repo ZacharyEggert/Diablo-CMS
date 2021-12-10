@@ -1,32 +1,31 @@
+import 'reflect-metadata';
+
 import dotenv from 'dotenv';
 dotenv.config();
-import { PORT, MONGODB_URL } from './constants';
-// import * as models from './models';
+
+import { createConnection } from 'typeorm';
+import connectionSettings from './connection';
+
+import { PORT } from './constants';
 import express from 'express';
-import mongoose from 'mongoose';
 
 import router from './routes';
 
-const app = express();
+const main = async () => {
+    const connection = await createConnection({
+        ...connectionSettings,
+    });
+    connection.runMigrations();
 
-mongoose.connect(MONGODB_URL);
+    const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/', router);
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use('/', router);
 
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-    // models.User.findOne(
-    //     {
-    //         where: { username: 'admin' },
-    //     },
-    //     { password: 0, __v: 0, createdAt: 0, updatedAt: 0 }
-    // )
-    //     .then((user) => {
-    //         console.log(user);
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //     });
-});
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}`);
+    });
+};
+
+main();
