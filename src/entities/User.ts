@@ -11,8 +11,8 @@ export class User {
     @Property({ nullable: false })
     password!: string;
 
-    @Property({ default: false, nullable: false })
-    accessRevoked!: boolean;
+    @Property({ default: false })
+    accessRevoked: boolean = false;
 
     @Property({ nullable: false })
     email!: string;
