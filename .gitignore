@@ -76,3 +76,4 @@ typings/
 .fusebox/
 /out
 /tsconfig.tsbuildinfo
+/temp
