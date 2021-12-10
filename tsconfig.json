@@ -10,8 +10,8 @@
             // "@lib/*": ["lib/*"],
             // "@controllers/*": ["controllers/*"],
             // "@controllers": ["controllers/index"],
-            // "@models/*": ["models/*"],
-            // "@models": ["models/index"],
+            // "@models/*":src/entities/*],
+            // "@models":src/entities/index],
             // "@routes/*": ["routes/*"],
             // "@routes": ["routes/index"]
         },
@@ -34,7 +34,8 @@
         "outDir": "./out",
         "rootDir": "./src",
         "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "declaration": true
     },
     "include": ["src/**/*"]
 }
