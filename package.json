@@ -9,7 +9,7 @@
     "private": true,
     "scripts": {
         "tswatch": "tsc --watch",
-        "dev": "nodemon ./out/server.js --ignore src/",
+        "dev": "nodemon ./out/server.js",
         "build": "tsc",
         "start": "node .",
         "migrations": "mikro-orm migration:create"
@@ -47,6 +47,12 @@
         "configPaths": [
             "./src/mikro-orm.config.ts",
             "./out/mikro-orm.config.js"
+        ]
+    },
+    "nodemon": {
+        "ignore": [
+            "src/",
+            "temp/"
         ]
     }
 }

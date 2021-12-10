@@ -26,6 +26,12 @@ const main = async () => {
 
     app.use('/', router);
 
+    app.all('*', (_, res) => {
+        res.status(404).json({
+            message: 'Not found',
+        });
+    });
+
     app.listen(PORT, () => {
         console.log(`Listening on port ${PORT}`);
     });

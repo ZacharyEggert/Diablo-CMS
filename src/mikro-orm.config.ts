@@ -9,9 +9,10 @@ import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { Options } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { User } from '@entities/User';
+import { Listing } from '@entities/Listing';
 
 const MikroOrmConfig: Options<PostgreSqlDriver> = {
-    entities: [User],
+    entities: [User, Listing],
     migrations: {
         path: __dirname + '/migrations',
         pattern: /^[\w-]+\d+\.[tj]s$/,

@@ -16,4 +16,18 @@ export class User {
 
     @Property({ nullable: false })
     email!: string;
+
+    constructor(options?: {
+        username: string;
+        password: string;
+        accessRevoked?: boolean;
+        email: string;
+    }) {
+        if (options) {
+            this.username = options.username;
+            this.password = options.password;
+            this.accessRevoked = options.accessRevoked || false;
+            this.email = options.email;
+        }
+    }
 }
