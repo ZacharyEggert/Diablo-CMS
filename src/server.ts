@@ -38,7 +38,7 @@ const main = async () => {
 
     console.log('Starting server...');
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app, path: '/apollo' });
+    apolloServer.applyMiddleware({ app, path: '/graphql' });
     console.log('Server started!');
 
     app.listen(PORT, () => {
