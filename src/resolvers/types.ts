@@ -35,8 +35,8 @@ export function ResponseWithError<TItem>(
     abstract class ResponseWithErrorClass {
         @Field(() => TItemClass, { nullable: true })
         data?: TItem;
-        @Field(() => GQLError, { nullable: true })
-        error?: GQLError;
+        @Field(() => [GQLError], { nullable: true })
+        errors?: GQLError[];
     }
     return ResponseWithErrorClass;
 }
