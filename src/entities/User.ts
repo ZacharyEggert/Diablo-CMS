@@ -1,19 +1,26 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Field, ObjectType } from 'type-graphql';
 
 @Entity()
+@ObjectType()
 export class User {
+    @Field(() => Number)
     @PrimaryKey({})
     id!: number;
 
+    @Field(() => String)
     @Property({ unique: true, nullable: false })
     username!: string;
 
+    @Field(() => String)
     @Property({ nullable: false })
     password!: string;
 
+    @Field(() => Boolean)
     @Property({ default: false })
     accessRevoked: boolean = false;
 
+    @Field(() => String)
     @Property({ nullable: false })
     email!: string;
 
