@@ -28,11 +28,16 @@ export class UsersResponse {
     error?: GQLError;
 }
 
+interface IResponseWithError<T> {
+    data?: T;
+    errors?: GQLError[];
+}
+
 export function ResponseWithError<TItem>(
     TItemClass: ClassType<TItem> | GraphQLScalarType | String | Number | Boolean
-) {
+): ClassType<IResponseWithError<TItem>> {
     @ObjectType({ isAbstract: true })
-    abstract class ResponseWithErrorClass {
+    class ResponseWithErrorClass {
         @Field(() => TItemClass, { nullable: true })
         data?: TItem;
         @Field(() => [GQLError], { nullable: true })
@@ -42,4 +47,4 @@ export function ResponseWithError<TItem>(
 }
 
 @ObjectType()
-export class BooleanWithError extends ResponseWithError(Boolean) {}
+export class BooleanWithError extends ResponseWithError(Boolean) { }

@@ -61,7 +61,7 @@ export class UserResolver {
         } catch (e) {
             console.error(e);
             const { message } = e as Error;
-            return { error: { message, field: 'SQL' } };
+            return { errors: [{ message, field: 'SQL' }] };
         }
     }
 }
