@@ -1,39 +1,48 @@
 import 'reflect-metadata';
+
 import './moduleAlias';
-
-import { MikroORM, RequestContext } from '@mikro-orm/core';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-
 import dotenv from 'dotenv';
 dotenv.config();
 
-import express from 'express';
+import { MikroORM } from '@mikro-orm/core';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
-import router from '@routes';
+import express from 'express';
+import resolvers from './resolvers';
 import MikroOrmConfig from './mikro-orm.config';
+import { buildSchema } from 'type-graphql';
 import { PORT } from './constants';
 
 const main = async () => {
     const orm = await MikroORM.init<PostgreSqlDriver>(MikroOrmConfig);
-
     orm.getMigrator().up();
 
     const app = express();
 
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use((_, __, next) => RequestContext.create(orm.em, next));
-
-    app.use('/', router);
-
-    app.all('*', (_, res) => {
-        res.status(404).json({
-            message: 'Not found',
-        });
+    const apolloServer = new ApolloServer({
+        context: ({
+            req,
+            res,
+        }: {
+            req: express.Request;
+            res: express.Response;
+        }) => ({ em: orm.em, req, res }),
+        schema: await buildSchema({
+            validate: false,
+            resolvers,
+        }),
+        plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
     });
 
+    console.log('Starting server...');
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app, path: '/apollo' });
+    console.log('Server started!');
+
     app.listen(PORT, () => {
-        console.log(`Listening on port ${PORT}`);
+        console.log('API is running on port:', PORT);
     });
 };
 

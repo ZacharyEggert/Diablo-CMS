@@ -3,7 +3,7 @@
         "target": "esnext",
         "module": "CommonJS",
         "jsx": "preserve",
-        "lib": ["ESNext", "ES5", "ES6"],
+        "lib": ["ESNext", "ES5", "ES6", "ESNext.AsyncIterable"],
         "baseUrl": "./",
         "paths": {
             "@lib": ["src/lib/index"],

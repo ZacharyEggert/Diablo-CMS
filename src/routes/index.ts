@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import apiRoutes from './api';
 
 const router = Router();
 
-router.use('/api', apiRoutes);
+router.all('/api', (_, res) => {
+    res.status(200).json({
+        message: 'API is in GraphQL endpoint',
+        _link: '/api/graphql',
+    });
+});
 
 export default router;
