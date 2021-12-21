@@ -622,10 +622,10 @@
   dependencies:
     eslint-visitor-keys "^1.1.0"
 
-"@zacharyeggert/reverb-api@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@zacharyeggert/reverb-api/-/reverb-api-0.1.2.tgz#67c3338dc782f2b21882c598c5efe814c0238562"
-  integrity sha512-Sf/alI/HUDiurIot0cLXGplT3zKxN8lc+2hkTjs7/wZoHYyPeGFUaIC/HBJ5IEnhrkO3YpYIjcMnks+n6MvuEg==
+"@zacharyeggert/reverb-api@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@zacharyeggert/reverb-api/-/reverb-api-0.2.0.tgz#c86a991ae27c988935957bb540d5d431560ee542"
+  integrity sha512-htotkv6RjQyjDjIFlLesbnMGt+FlZOkBDh1wwrViqiZU1ocQ9tajazvXbKUSxjurF2vYc9+DTrJQgi/Iw10rEw==
   dependencies:
     axios "^0.23.0"
 

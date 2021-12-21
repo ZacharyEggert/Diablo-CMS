@@ -9,17 +9,21 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
+import { ReverbApiClient } from '@zacharyeggert/reverb-api/'
+
 import express from 'express';
 import resolvers from './resolvers';
 import MikroOrmConfig from './mikro-orm.config';
 import { buildSchema } from 'type-graphql';
-import { PORT } from './constants';
+import { PORT, REVERB_API_KEY } from './constants';
 
 const main = async () => {
     const orm = await MikroORM.init<PostgreSqlDriver>(MikroOrmConfig);
     orm.getMigrator().up();
 
     const app = express();
+
+    const reverbClient = new ReverbApiClient(REVERB_API_KEY);
 
     const apolloServer = new ApolloServer({
         context: ({
@@ -28,7 +32,7 @@ const main = async () => {
         }: {
             req: express.Request;
             res: express.Response;
-        }) => ({ em: orm.em, req, res }),
+        }) => ({ em: orm.em, req, res, rc: reverbClient }),
         schema: await buildSchema({
             validate: false,
             resolvers,

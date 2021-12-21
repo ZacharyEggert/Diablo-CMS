@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { ReverbListing } from 'src/types';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
@@ -8,9 +9,9 @@ export class Listing {
     @PrimaryKey({ index: true })
     id!: number;
 
-    @Field(() => String)
+    @Field(() => Number)
     @Property({ nullable: true })
-    reverbId?: string;
+    reverbId?: number;
 
     @Field(() => String)
     @Property({ nullable: true })
@@ -73,6 +74,26 @@ export class Listing {
             Object.assign(this, options);
         }
     }
+
+    static fromReverb(reverbListing: ReverbListing) {
+        const listing = new Listing();
+        listing.reverbId = reverbListing.id;
+        listing.reverbSku = reverbListing.sku;
+        listing.title = reverbListing.title;
+        listing.make = reverbListing.make;
+        listing.model = reverbListing.model;
+        listing.year = reverbListing.year;
+        listing.finish = reverbListing.finish;
+        listing.description = reverbListing.description;
+        listing.condition = reverbListing.condition.display_name;
+        listing.categories = reverbListing.categories.map(c => c.full_name);
+        listing.price = reverbListing.price.amount_cents / 100;
+        listing.slug = reverbListing.slug;
+        listing.photos = reverbListing.photos.map(p => p._links.small_crop.href);
+        return listing;
+    }
+
+
 
     update(options?: Partial<Listing>) {
         if (options) {

@@ -7,3 +7,5 @@ export const POSTGRES_HOST = process.env.POSTGRES_HOST || 'localhost';
 export const POSTGRES_PORT = parseInt(process.env.POSTGRES_PORT || '5432');
 
 export const REVERB_API_KEY = process.env.REVERB_API_KEY;
+
+export const ROOTDIRNAME = __dirname;

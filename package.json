@@ -9,7 +9,7 @@
     "private": true,
     "scripts": {
         "tswatch": "tsc --watch",
-        "dev": "nodemon ./out/server.js",
+        "dev": "nodemon ./out/server.js --config ./nodemon.json",
         "build": "tsc",
         "start": "node .",
         "migrations": "mikro-orm migration:create"
@@ -34,7 +34,7 @@
         "@mikro-orm/core": "^4.5.9",
         "@mikro-orm/postgresql": "^4.5.9",
         "@mikro-orm/reflection": "^4.5.9",
-        "@zacharyeggert/reverb-api": "^0.1.2",
+        "@zacharyeggert/reverb-api": "^0.2.0",
         "apollo-server-core": "^3.5.0",
         "apollo-server-express": "^3.5.0",
         "class-validator": "^0.13.2",
@@ -53,12 +53,6 @@
         "configPaths": [
             "./src/mikro-orm.config.ts",
             "./out/mikro-orm.config.js"
-        ]
-    },
-    "nodemon": {
-        "ignore": [
-            "src/",
-            "temp/"
         ]
     }
 }
