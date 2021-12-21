@@ -12,7 +12,7 @@ export class User {
     @Property({ unique: true, nullable: false })
     username!: string;
 
-    @Field(() => String)
+    // @Field(() => String) //Determines password visibility in GraphQL
     @Property({ nullable: false })
     password!: string;
 

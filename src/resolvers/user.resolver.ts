@@ -14,11 +14,11 @@ export class UserResolver {
     public async users(@Ctx() ctx: GQLContext): Promise<UsersResponse> {
         try {
             const users = await ctx.em.find(User, {});
-            return { users };
+            return { data: users };
         } catch (e) {
             console.error(e);
             const { message } = e as Error;
-            return { error: { message, field: 'SQL' } };
+            return { errors: [{ message, field: 'SQL' }] };
         }
     }
 
@@ -31,18 +31,18 @@ export class UserResolver {
             const user = await ctx.em.findOne(User, id);
             if (!user) {
                 return {
-                    error: {
+                    errors: [{
                         message: 'User not found',
                         field: 'ID',
                         code: '404',
-                    },
+                    }],
                 };
             }
-            return { user };
+            return { data: user };
         } catch (e) {
             console.error(e);
             const { message } = e as Error;
-            return { error: { message, field: 'SQL' } };
+            return { errors: [{ message, field: 'SQL' }] };
         }
     }
 
@@ -64,4 +64,28 @@ export class UserResolver {
             return { errors: [{ message, field: 'SQL' }] };
         }
     }
+
+    @Mutation(() => UserResponse)
+    public async createUser(
+        @Ctx() ctx: GQLContext,
+        @Arg('username') username: string,
+        @Arg('password') password: string,
+        @Arg('email') email: string
+    ): Promise<UserResponse> {
+        try {
+            const user = new User({
+                username,
+                password,
+                email,
+            });
+            await ctx.em.persistAndFlush(user);
+            return { data: user };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+
 }

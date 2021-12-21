@@ -5,8 +5,16 @@ import { Field, ObjectType } from 'type-graphql';
 @Entity()
 export class Listing {
     @Field(() => Number)
-    @PrimaryKey()
+    @PrimaryKey({ index: true })
     id!: number;
+
+    @Field(() => String)
+    @Property({ nullable: true })
+    reverbId?: string;
+
+    @Field(() => String)
+    @Property({ nullable: true })
+    reverbSku?: string;
 
     @Field(() => String)
     @Property({ nullable: false })
@@ -24,17 +32,25 @@ export class Listing {
     @Property({ nullable: true })
     submodel?: string;
 
-    @Field(() => Number, { nullable: true })
+    @Field(() => String, { nullable: true })
     @Property({ nullable: true })
-    year?: number;
+    year?: string;
 
     @Field(() => String, { nullable: true })
     @Property({ nullable: true })
     finish?: string;
 
     @Field(() => String)
-    @Property({ nullable: false })
+    @Property({ nullable: false, columnType: 'text' })
     description!: string;
+
+    @Field(() => String)
+    @Property({ nullable: true })
+    condition?: string;
+
+    @Field(() => [String])
+    @Property({ nullable: true })
+    categories?: string[];
 
     @Field(() => Number)
     @Property({ nullable: false })
@@ -46,7 +62,11 @@ export class Listing {
 
     @Field(() => [String])
     @Property()
-    imageUrls!: string[];
+    photos!: string[];
+
+    @Field(() => String)
+    @Property({ nullable: false })
+    slug!: string;
 
     constructor(options?: Partial<Listing>) {
         if (options) {

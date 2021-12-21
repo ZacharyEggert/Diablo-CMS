@@ -42,7 +42,7 @@ const main = async () => {
     console.log('Server started!');
 
     app.listen(PORT, () => {
-        console.log('API is running on port:', PORT);
+        console.log('GraphQL is running on port:', PORT);
     });
 };
 

@@ -16,6 +16,7 @@ const MikroOrmConfig: Options<PostgreSqlDriver> = {
     migrations: {
         path: __dirname + '/migrations',
         pattern: /^[\w-]+\d+\.[tj]s$/,
+        dropTables: true,
     },
     dbName: POSTGRES_DB,
     type: 'postgresql',
@@ -25,6 +26,9 @@ const MikroOrmConfig: Options<PostgreSqlDriver> = {
     user: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
     metadataProvider: TsMorphMetadataProvider,
+    cache: {
+        enabled: false,
+    }
 };
 
 export default MikroOrmConfig;
