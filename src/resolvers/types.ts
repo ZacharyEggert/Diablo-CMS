@@ -1,7 +1,7 @@
 import { Listing } from '@entities/Listing';
 import { User } from '@entities/User';
 import { GraphQLScalarType } from 'graphql';
-import { ClassType, Field, ObjectType } from 'type-graphql';
+import { ClassType, Field, InputType, ObjectType } from 'type-graphql';
 
 @ObjectType()
 export class GQLError {
@@ -12,6 +12,15 @@ export class GQLError {
     @Field(() => String, { nullable: true })
     code?: string;
 }
+
+@ObjectType()
+class PaginatedListings {
+    @Field(() => [Listing])
+    listings: Listing[];
+    @Field(() => Boolean)
+    hasMore: boolean;
+}
+
 interface IResponseWithErrors<T> {
     data?: T;
     errors?: GQLError[];
@@ -22,7 +31,13 @@ interface IResponseArrayWithErrors<T> {
 }
 
 export function ResponseWithError<TItem>(
-    TItemClass: ClassType<TItem> | GraphQLScalarType | String | Number | Boolean | Array<any>
+    TItemClass:
+        | ClassType<TItem>
+        | GraphQLScalarType
+        | String
+        | Number
+        | Boolean
+        | Array<any>
 ): ClassType<IResponseWithErrors<TItem>> {
     @ObjectType({ isAbstract: true })
     class ResponseWithErrorClass {
@@ -35,7 +50,13 @@ export function ResponseWithError<TItem>(
 }
 
 export function ResponseArrayWithError<TItem>(
-    TItemClass: ClassType<TItem> | GraphQLScalarType | String | Number | Boolean | Array<any>
+    TItemClass:
+        | ClassType<TItem>
+        | GraphQLScalarType
+        | String
+        | Number
+        | Boolean
+        | Array<any>
 ): ClassType<IResponseArrayWithErrors<TItem>> {
     @ObjectType({ isAbstract: true })
     class ResponseWithErrorClass {
@@ -47,16 +68,21 @@ export function ResponseArrayWithError<TItem>(
     return ResponseWithErrorClass;
 }
 @ObjectType()
-export class BooleanWithError extends ResponseWithError(Boolean) { }
+export class BooleanWithError extends ResponseWithError(Boolean) {}
 
 @ObjectType()
-export class UserResponse extends ResponseWithError(User) { }
+export class UserResponse extends ResponseWithError(User) {}
 
 @ObjectType()
-export class UsersResponse extends ResponseArrayWithError(User) { }
+export class UsersResponse extends ResponseArrayWithError(User) {}
 
 @ObjectType()
-export class ListingResponse extends ResponseWithError(Listing) { }
+export class ListingResponse extends ResponseWithError(Listing) {}
 
 @ObjectType()
-export class ListingsResponse extends ResponseArrayWithError(Listing) { }
+export class ListingsResponse extends ResponseArrayWithError(Listing) {}
+
+@ObjectType()
+export class PaginatedListingsResponse extends ResponseArrayWithError(
+    PaginatedListings
+) {}
