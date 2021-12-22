@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { ReverbApiClient } from '@zacharyeggert/reverb-api';
 import { ReverbListing } from 'src/types';
 import { Field, ObjectType } from 'type-graphql';
 
@@ -16,6 +17,14 @@ export class Listing {
     @Field(() => String)
     @Property({ nullable: true })
     reverbSku?: string;
+
+    @Field(() => String)
+    @Property({ nullable: true })
+    reverbSelfLink?: string;
+
+    @Field(() => Boolean)
+    @Property({ nullable: true, default: false })
+    reverbImagesImported: boolean = false;
 
     @Field(() => String)
     @Property({ nullable: false })
@@ -93,7 +102,34 @@ export class Listing {
             (p) => p._links.large_crop.href
         );
         listing.cost = 0;
+        listing.reverbSelfLink = reverbListing._links.self.href;
         return listing;
+    }
+
+    async importReverbImages(rc: ReverbApiClient) {
+        if (this.reverbImagesImported) {
+            console.error(new Error('Listing already imported'));
+            return;
+        }
+        if (!this.reverbId) {
+            console.error(new Error('Listing has no reverb source'));
+            return;
+        }
+        if (!this.reverbSelfLink) {
+            console.error(new Error('Listing has no reverbSelfLink'));
+            return;
+        }
+        try {
+            const self = await rc.get(this.reverbSelfLink);
+            this.photos = self.data.photos.map(
+                (p: any) => p._links.large_crop.href
+            );
+            this.reverbImagesImported = true;
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return;
+        }
     }
 
     update(options?: Partial<Listing>) {
