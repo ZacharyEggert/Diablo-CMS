@@ -25,10 +25,10 @@ export class ReverbResolver {
                 (listing: { [any: string]: any }) => !idsInUse.has(listing.id)
             );
 
-            fs.writeFileSync(
-                path.join(ROOTDIRNAME + '/../testing/novelAll.json'),
-                JSON.stringify(novelListings, null, 2)
-            );
+            // fs.writeFileSync(
+            //     path.join(ROOTDIRNAME + '/../testing/novelAll.json'),
+            //     JSON.stringify(novelListings, null, 2)
+            // );
 
             console.log('starting DB import');
             for (const listing of novelListings) {
@@ -61,10 +61,10 @@ export class ReverbResolver {
                 (listing: { [any: string]: any }) => !idsInUse.has(listing.id)
             );
 
-            fs.writeFileSync(
-                ROOTDIRNAME + '/../testing/novelRecent.json',
-                JSON.stringify(novelListings, null, 2)
-            );
+            // fs.writeFileSync(
+            //     ROOTDIRNAME + '/../testing/novelRecent.json',
+            //     JSON.stringify(novelListings, null, 2)
+            // );
 
             console.log('starting DB import');
             for (const listing of novelListings) {
