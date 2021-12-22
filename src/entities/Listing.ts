@@ -86,14 +86,15 @@ export class Listing {
         listing.finish = reverbListing.finish;
         listing.description = reverbListing.description;
         listing.condition = reverbListing.condition.display_name;
-        listing.categories = reverbListing.categories.map(c => c.full_name);
+        listing.categories = reverbListing.categories.map((c) => c.full_name);
         listing.price = reverbListing.price.amount_cents / 100;
         listing.slug = reverbListing.slug;
-        listing.photos = reverbListing.photos.map(p => p._links.small_crop.href);
+        listing.photos = reverbListing.photos.map(
+            (p) => p._links.large_crop.href
+        );
+        listing.cost = 0;
         return listing;
     }
-
-
 
     update(options?: Partial<Listing>) {
         if (options) {
