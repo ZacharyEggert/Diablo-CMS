@@ -78,6 +78,26 @@ export class ListingResolver {
         }
     }
 
+    // get multiple listings by slug
+    @Query(() => ListingsResponse)
+    public async listingsBySlugs(
+        @Ctx() { em }: GQLContext,
+        @Arg('slugs', () => [String]) slugs: string[]
+    ): Promise<ListingsResponse> {
+        try {
+            const listings = await em.find(
+                Listing,
+                { slug: { $in: slugs } },
+                { orderBy: { price: 'DESC' } }
+            );
+            return { data: listings };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
     // get listings by make
     @Query(() => ListingsResponse)
     public async listingsByMake(
