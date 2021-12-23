@@ -7,9 +7,9 @@ import { BooleanWithError, ListingResponse, ListingsResponse } from './types';
 export class ListingResolver {
     // get all listings
     @Query(() => ListingsResponse)
-    public async listings(@Ctx() { em }: any): Promise<ListingsResponse> {
+    public async listings(@Ctx() { em }: GQLContext): Promise<ListingsResponse> {
         try {
-            const listings = await em.find(Listing, {});
+            const listings = await em.find(Listing, {}, { orderBy: { price: 'DESC' } });
             return { data: listings };
         } catch (e) {
             console.error(e);
@@ -21,7 +21,7 @@ export class ListingResolver {
     // get a listing by id
     @Query(() => ListingResponse)
     public async listing(
-        @Ctx() { em }: any,
+        @Ctx() { em }: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<ListingResponse> {
         try {
@@ -45,10 +45,88 @@ export class ListingResolver {
         }
     }
 
+    // get listings by make
+    @Query(() => ListingsResponse)
+    public async listingsByMake(
+        @Ctx() { em }: GQLContext,
+        @Arg('make', () => String) make: string
+    ): Promise<ListingsResponse> {
+        try {
+            const listings = await em.find(Listing, { make }, { orderBy: { price: 'DESC' } });
+            return { data: listings };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+    //get listings by category
+    @Query(() => ListingsResponse)
+    public async listingsByCategory(
+        @Ctx() { em }: GQLContext,
+        @Arg('category', () => String) category: string
+    ): Promise<ListingsResponse> {
+        try {
+            const listings = await em.find(Listing, {}, { orderBy: { price: 'DESC' } });
+
+            const filteredListings = listings.filter((listing) => {
+                if (!listing.categories) {
+                    return false
+                }
+                for (const cat in listing.categories) {
+                    if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
+                        return true
+                    }
+                    console.log(cat)
+                    return false
+                }
+            });
+
+            return { data: filteredListings };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+    // get listings by make and category
+    @Query(() => ListingsResponse)
+    public async listingsByMakeAndCategory(
+        @Ctx() { em }: GQLContext,
+        @Arg('make', () => String) make: string,
+        @Arg('category', () => String) category: string
+    ): Promise<ListingsResponse> {
+        try {
+            const listings = await em.find(Listing, { make }, { orderBy: { price: 'DESC' } });
+
+            const filteredListings = listings.filter((listing) => {
+                if (!listing.categories) {
+                    return false
+                }
+                for (const cat in listing.categories) {
+                    if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
+                        return true
+                    }
+                    console.log(cat)
+                    return false
+                }
+            });
+
+            return { data: filteredListings };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+
     // create a listing
     @Mutation(() => ListingResponse)
     public async createListing(
-        @Ctx() { em }: any,
+        @Ctx() { em }: GQLContext,
         @Arg('title') title: string,
         @Arg('make') make: string,
         @Arg('model') model: string,

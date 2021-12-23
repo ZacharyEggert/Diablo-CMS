@@ -16,6 +16,8 @@ import resolvers from './resolvers';
 import MikroOrmConfig from './mikro-orm.config';
 import { buildSchema } from 'type-graphql';
 import { PORT, REVERB_API_KEY } from './constants';
+import { emit } from 'process';
+import { Listing } from '@entities/Listing';
 
 const main = async () => {
     const orm = await MikroORM.init<PostgreSqlDriver>(MikroOrmConfig);
@@ -39,6 +41,7 @@ const main = async () => {
         }),
         plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
     });
+
 
     console.log('Starting server...');
     await apolloServer.start();

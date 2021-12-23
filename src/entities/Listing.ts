@@ -10,19 +10,19 @@ export class Listing {
     @PrimaryKey({ index: true })
     id!: number;
 
-    @Field(() => Number)
+    @Field(() => Number, { nullable: true })
     @Property({ nullable: true })
     reverbId?: number;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @Property({ nullable: true })
     reverbSku?: string;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @Property({ nullable: true })
     reverbSelfLink?: string;
 
-    @Field(() => Boolean)
+    @Field(() => Boolean, { nullable: true })
     @Property({ nullable: true, default: false })
     reverbImagesImported: boolean = false;
 
@@ -63,7 +63,7 @@ export class Listing {
     categories?: string[];
 
     @Field(() => Number)
-    @Property({ nullable: false })
+    @Property({ nullable: false, columnType: '' })
     price!: number;
 
     @Field(() => Number)
@@ -96,7 +96,7 @@ export class Listing {
         listing.description = reverbListing.description;
         listing.condition = reverbListing.condition.display_name;
         listing.categories = reverbListing.categories.map((c) => c.full_name);
-        listing.price = reverbListing.price.amount_cents / 100;
+        listing.price = reverbListing.price.amount_cents;
         listing.slug = reverbListing.slug;
         listing.photos = reverbListing.photos.map(
             (p) => p._links.large_crop.href
