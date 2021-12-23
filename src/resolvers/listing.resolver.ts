@@ -7,9 +7,15 @@ import { BooleanWithError, ListingResponse, ListingsResponse } from './types';
 export class ListingResolver {
     // get all listings
     @Query(() => ListingsResponse)
-    public async listings(@Ctx() { em }: GQLContext): Promise<ListingsResponse> {
+    public async listings(
+        @Ctx() { em }: GQLContext
+    ): Promise<ListingsResponse> {
         try {
-            const listings = await em.find(Listing, {}, { orderBy: { price: 'DESC' } });
+            const listings = await em.find(
+                Listing,
+                {},
+                { orderBy: { price: 'DESC' } }
+            );
             return { data: listings };
         } catch (e) {
             console.error(e);
@@ -45,6 +51,33 @@ export class ListingResolver {
         }
     }
 
+    // get listing by slug
+    @Query(() => ListingResponse)
+    public async listingBySlug(
+        @Ctx() { em }: GQLContext,
+        @Arg('slug', () => String) slug: string
+    ): Promise<ListingResponse> {
+        try {
+            const listing = await em.findOne(Listing, { slug });
+            if (!listing) {
+                return {
+                    errors: [
+                        {
+                            message: 'Listing not found',
+                            field: 'SLUG',
+                            code: '404',
+                        },
+                    ],
+                };
+            }
+            return { data: listing };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
     // get listings by make
     @Query(() => ListingsResponse)
     public async listingsByMake(
@@ -52,7 +85,11 @@ export class ListingResolver {
         @Arg('make', () => String) make: string
     ): Promise<ListingsResponse> {
         try {
-            const listings = await em.find(Listing, { make }, { orderBy: { price: 'DESC' } });
+            const listings = await em.find(
+                Listing,
+                { make },
+                { orderBy: { price: 'DESC' } }
+            );
             return { data: listings };
         } catch (e) {
             console.error(e);
@@ -68,18 +105,26 @@ export class ListingResolver {
         @Arg('category', () => String) category: string
     ): Promise<ListingsResponse> {
         try {
-            const listings = await em.find(Listing, {}, { orderBy: { price: 'DESC' } });
+            const listings = await em.find(
+                Listing,
+                {},
+                { orderBy: { price: 'DESC' } }
+            );
 
             const filteredListings = listings.filter((listing) => {
                 if (!listing.categories) {
-                    return false
+                    return false;
                 }
                 for (const cat in listing.categories) {
-                    if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
-                        return true
+                    if (
+                        listing.categories[cat]
+                            .toLowerCase()
+                            .includes(category.toLowerCase())
+                    ) {
+                        return true;
                     }
                     // console.log(cat)
-                    return false
+                    return false;
                 }
             });
 
@@ -99,18 +144,26 @@ export class ListingResolver {
         @Arg('category', () => String) category: string
     ): Promise<ListingsResponse> {
         try {
-            const listings = await em.find(Listing, { make }, { orderBy: { price: 'DESC' } });
+            const listings = await em.find(
+                Listing,
+                { make },
+                { orderBy: { price: 'DESC' } }
+            );
 
             const filteredListings = listings.filter((listing) => {
                 if (!listing.categories) {
-                    return false
+                    return false;
                 }
                 for (const cat in listing.categories) {
-                    if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
-                        return true
+                    if (
+                        listing.categories[cat]
+                            .toLowerCase()
+                            .includes(category.toLowerCase())
+                    ) {
+                        return true;
                     }
                     // console.log(cat)
-                    return false
+                    return false;
                 }
             });
 
@@ -121,7 +174,6 @@ export class ListingResolver {
             return { errors: [{ message, field: 'SQL' }] };
         }
     }
-
 
     // create a listing
     @Mutation(() => ListingResponse)
