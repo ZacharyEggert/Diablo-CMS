@@ -78,7 +78,7 @@ export class ListingResolver {
                     if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
                         return true
                     }
-                    console.log(cat)
+                    // console.log(cat)
                     return false
                 }
             });
@@ -109,7 +109,7 @@ export class ListingResolver {
                     if (listing.categories[cat].toLowerCase().includes(category.toLowerCase())) {
                         return true
                     }
-                    console.log(cat)
+                    // console.log(cat)
                     return false
                 }
             });
