@@ -9,7 +9,7 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
-import { ReverbApiClient } from '@zacharyeggert/reverb-api/'
+import { ReverbApiClient } from '@zacharyeggert/reverb-api/';
 
 import express from 'express';
 import resolvers from './resolvers';
@@ -40,8 +40,8 @@ const main = async () => {
             resolvers,
         }),
         plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
+        introspection: true,
     });
-
 
     console.log('Starting server...');
     await apolloServer.start();
