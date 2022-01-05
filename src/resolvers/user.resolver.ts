@@ -13,6 +13,19 @@ import {
 export class UserResolver {
     @Query(() => UsersResponse)
     public async users(@Ctx() ctx: GQLContext): Promise<UsersResponse> {
+
+        const { loggedIn } = ctx.req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot view users without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const users = await ctx.em.find(User, {});
             return { data: users };
@@ -28,6 +41,19 @@ export class UserResolver {
         @Ctx() ctx: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<UserResponse> {
+
+        const { loggedIn } = ctx.req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot view user without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const user = await ctx.em.findOne(User, id);
             if (!user) {
@@ -52,6 +78,19 @@ export class UserResolver {
         @Ctx() ctx: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<BooleanWithError> {
+
+        const { loggedIn } = ctx.req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot delete user without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const user = await ctx.em.findOne(User, id);
             if (!user) {
@@ -73,6 +112,19 @@ export class UserResolver {
         @Arg('password') password: string,
         @Arg('email') email: string
     ): Promise<UserResponse> {
+
+        const { loggedIn } = ctx.req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot create user without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const userExists = await ctx.em.findOne(User, { username: username.toLowerCase() });
             if (userExists) {
@@ -103,6 +155,19 @@ export class UserResolver {
 
     @Query(() => UserResponse)
     public async me(@Ctx() ctx: GQLContext): Promise<UserResponse> {
+
+        const { loggedIn } = ctx.req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot view user without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
 
             if (!ctx.req.session || !ctx.req.session!.userId) {

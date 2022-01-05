@@ -1,9 +1,6 @@
 import { GQLContext } from 'src/types';
 import { Arg, Ctx, Int, Mutation, Resolver } from 'type-graphql';
 import { BooleanWithError } from './types';
-import fs from 'fs';
-import path from 'path';
-import { ROOTDIRNAME } from '../constants';
 import { Listing } from '@entities/Listing';
 import { createMapFromListings } from '@lib/util';
 
@@ -11,8 +8,21 @@ import { createMapFromListings } from '@lib/util';
 export class ReverbResolver {
     @Mutation(() => BooleanWithError)
     public async importAllReverbListings(
-        @Ctx() { rc, em }: GQLContext
+        @Ctx() { rc, em, req }: GQLContext
     ): Promise<BooleanWithError> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot import listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listings = await em.find(Listing, {});
             const idsInUse = createMapFromListings(listings);
@@ -47,8 +57,21 @@ export class ReverbResolver {
 
     @Mutation(() => BooleanWithError)
     public async importRecentReverbListings(
-        @Ctx() { rc, em }: GQLContext
+        @Ctx() { rc, em, req }: GQLContext
     ): Promise<BooleanWithError> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot import listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listings = await em.find(Listing, {});
             const idsInUse = createMapFromListings(listings);
@@ -83,9 +106,22 @@ export class ReverbResolver {
 
     @Mutation(() => BooleanWithError)
     public async importImagesToListing(
-        @Ctx() { rc, em }: GQLContext,
+        @Ctx() { rc, em, req }: GQLContext,
         @Arg('id', () => Int) id: number
     ) {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot import listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listing = await em.findOne(Listing, { id });
             if (!listing) {
@@ -127,7 +163,20 @@ export class ReverbResolver {
 
     //This is a test function to see if the images are being imported correctly. DO NOT USE IN PRODUCTION //TODO remove this
     @Mutation(() => BooleanWithError)
-    public async importImagesToAllListings(@Ctx() { rc, em }: GQLContext) {
+    public async importImagesToAllListings(@Ctx() { rc, em, req }: GQLContext) {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot import listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listings = await em.find(Listing, {});
 
