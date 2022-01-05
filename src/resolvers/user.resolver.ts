@@ -1,4 +1,5 @@
 import { User } from '@entities/User';
+import argon2 from 'argon2';
 import { GQLContext } from 'src/types';
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from 'type-graphql';
 import {
@@ -73,10 +74,23 @@ export class UserResolver {
         @Arg('email') email: string
     ): Promise<UserResponse> {
         try {
+            const userExists = await ctx.em.findOne(User, { username: username.toLowerCase() });
+            if (userExists) {
+                return {
+                    errors: [{
+                        message: 'User already exists',
+                        field: 'Username',
+                        code: '400',
+                    }],
+                };
+            }
+
+            const hashedPassword = await argon2.hash(password);
+
             const user = new User({
-                username,
-                password,
-                email,
+                username: username.toLowerCase(),
+                password: hashedPassword,
+                email: email.toLowerCase(),
             });
             await ctx.em.persistAndFlush(user);
             return { data: user };
@@ -87,5 +101,102 @@ export class UserResolver {
         }
     }
 
+    @Query(() => UserResponse)
+    public async me(@Ctx() ctx: GQLContext): Promise<UserResponse> {
+        try {
+
+            if (!ctx.req.session || !ctx.req.session!.userId) {
+                console.error('No session found', ctx.req.session);
+                return {
+                    errors: [{
+                        message: 'User not found',
+                        field: 'ID',
+                        code: '404',
+                    }],
+                };
+            }
+
+            const user = await ctx.em.findOne(User, ctx.req.session.userId);
+            if (!user) {
+                return {
+                    errors: [{
+                        message: 'User not found',
+                        field: 'ID',
+                        code: '404',
+                    }],
+                };
+            }
+            return { data: user };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+    @Mutation(() => UserResponse)
+    public async login(
+        @Ctx() ctx: GQLContext,
+        @Arg('username') username: string,
+        @Arg('password') password: string
+    ): Promise<UserResponse> {
+        try {
+
+            const user = await ctx.em.findOne(User, { username: username.toLowerCase() });
+            if (!user) {
+                return {
+                    errors: [{
+                        message: 'User not found',
+                        field: 'ID',
+                        code: '404',
+                    }],
+                };
+            }
+
+            const isValid = await argon2.verify(user.password, password);
+            if (!isValid) {
+                return {
+                    errors: [{
+                        message: 'Invalid password',
+                        field: 'Password',
+                        code: '400',
+                    }],
+                };
+            }
+
+
+            ctx.req.session.userId = user.id;
+            ctx.req.session.loggedIn = true;
+            return { data: user };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+    @Mutation(() => BooleanWithError)
+    public async logout(@Ctx() ctx: GQLContext): Promise<BooleanWithError> {
+        try {
+            ctx.req.session.destroy((err) => {
+                if (err) {
+                    console.error(err);
+                    return {
+                        errors: [{
+                            message: 'Error logging out',
+                            field: 'Logout',
+                            code: '500',
+                        }],
+                    };
+                }
+            });
+
+            return { data: true };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
 
 }

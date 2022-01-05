@@ -1,7 +1,7 @@
 import { Connection, IDatabaseDriver, EntityManager } from '@mikro-orm/core';
 import { ReverbApiClient } from '@zacharyeggert/reverb-api';
 import { Request, Response } from 'express';
-// import { Session } from 'express-session';
+import { Session } from 'express-session';
 
 export type GQLContext = {
     em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>;
@@ -10,13 +10,14 @@ export type GQLContext = {
     rc: ReverbApiClient;
 };
 
-// export type SessionOverload = Session & {
-//     userId?: number;
-//     [key: string]: any;
-// }
+export type SessionOverload = Session & {
+    userId?: number;
+    loggedIn?: boolean;
+    [key: string]: any;
+}
 
 export type RequestOverload = Request & {
-    // session?: SessionOverload;
+    session?: SessionOverload;
 };
 
 export interface ReverbListing {
