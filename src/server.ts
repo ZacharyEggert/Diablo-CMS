@@ -54,7 +54,7 @@ const main = async () => {
 
             cookie: {
                 maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-                sameSite: !__PROD__ && process.env.secure ? 'none' : 'lax', // csrf
+                sameSite: 'lax', // csrf
                 httpOnly: false,
                 secure: !!(__PROD__ && process.env.secure), // cookie only works in https
 
