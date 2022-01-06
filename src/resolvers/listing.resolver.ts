@@ -198,7 +198,7 @@ export class ListingResolver {
     // create a listing
     @Mutation(() => ListingResponse)
     public async createListing(
-        @Ctx() { em }: GQLContext,
+        @Ctx() { em, req }: GQLContext,
         @Arg('title') title: string,
         @Arg('make') make: string,
         @Arg('model') model: string,
@@ -210,6 +210,19 @@ export class ListingResolver {
         @Arg('year', { nullable: true }) year?: string,
         @Arg('finish', { nullable: true }) finish?: string
     ): Promise<ListingResponse> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot create listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listing = new Listing({
                 cost,
@@ -235,9 +248,22 @@ export class ListingResolver {
     //delete a listing
     @Mutation(() => BooleanWithError)
     public async deleteListing(
-        @Ctx() { em }: GQLContext,
+        @Ctx() { em, req }: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<BooleanWithError> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot delete listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listing = await em.findOne(Listing, { id });
             if (!listing) {
@@ -264,8 +290,21 @@ export class ListingResolver {
     //delete all listings
     @Mutation(() => BooleanWithError)
     public async deleteAllListings(
-        @Ctx() { em }: GQLContext
+        @Ctx() { em, req }: GQLContext
     ): Promise<BooleanWithError> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot delete listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
         try {
             const listings = await em.find(Listing, {});
             for (const listing of listings) {

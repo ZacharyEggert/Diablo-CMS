@@ -66,6 +66,10 @@ export class Listing {
     @Property({ nullable: false, columnType: '' })
     price!: number;
 
+    @Field(() => Number, { nullable: true })
+    @Property({ nullable: true })
+    salePrice?: number;
+
     @Field(() => Number)
     @Property({ nullable: false })
     cost!: number;
@@ -127,7 +131,6 @@ export class Listing {
             this.reverbImagesImported = true;
         } catch (e) {
             console.error(e);
-            const { message } = e as Error;
             return;
         }
     }
