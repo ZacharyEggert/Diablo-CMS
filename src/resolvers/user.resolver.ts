@@ -264,4 +264,20 @@ export class UserResolver {
         }
     }
 
+    //TODO REMOVE THIS
+    @Mutation(() => BooleanWithError)
+    public async createTestUser(
+        @Ctx() ctx: GQLContext
+    ): Promise<BooleanWithError> {
+        try {
+            const testUser = ctx.em.create(User, { email: 'test@gmail.com', username: 'admin', password: 'password' });
+            await ctx.em.persistAndFlush(testUser);
+            return { data: true };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
 }
