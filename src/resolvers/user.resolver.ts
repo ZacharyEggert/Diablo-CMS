@@ -269,9 +269,18 @@ export class UserResolver {
     public async createTestUser(
         @Ctx() ctx: GQLContext
     ): Promise<BooleanWithError> {
+
+        const hashedPassword = await argon2.hash('password');
+
         try {
-            const testUser = ctx.em.create(User, { email: 'test@gmail.com', username: 'admin', password: 'password' });
+            const oldTestUser = await ctx.em.findOne(User, { username: 'admin' });
+            if (oldTestUser) {
+                await ctx.em.removeAndFlush(oldTestUser);
+            }
+
+            const testUser = ctx.em.create(User, { email: 'test@gmail.com', username: 'admin', password: hashedPassword });
             await ctx.em.persistAndFlush(testUser);
+
             return { data: true };
         } catch (e) {
             console.error(e);
