@@ -82,6 +82,14 @@ export class Listing {
     @Property({ nullable: false })
     slug!: string;
 
+    @Field(() => Date)
+    @Property({ default: new Date().getDate() })
+    createdAt = new Date();
+
+    @Field(() => Date)
+    @Property({ default: new Date().getDate() })
+    updatedAt = new Date();
+
     constructor(options?: Partial<Listing>) {
         if (options) {
             Object.assign(this, options);
@@ -139,5 +147,6 @@ export class Listing {
         if (options) {
             Object.assign(this, options);
         }
+        this.updatedAt = new Date();
     }
 }

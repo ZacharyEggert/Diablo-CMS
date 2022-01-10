@@ -68,21 +68,21 @@ export function ResponseArrayWithError<TItem>(
     return ResponseWithErrorClass;
 }
 @ObjectType()
-export class BooleanWithError extends ResponseWithError(Boolean) {}
+export class BooleanWithError extends ResponseWithError(Boolean) { }
 
 @ObjectType()
-export class UserResponse extends ResponseWithError(User) {}
+export class UserResponse extends ResponseWithError(User) { }
 
 @ObjectType()
-export class UsersResponse extends ResponseArrayWithError(User) {}
+export class UsersResponse extends ResponseArrayWithError(User) { }
 
 @ObjectType()
-export class ListingResponse extends ResponseWithError(Listing) {}
+export class ListingResponse extends ResponseWithError(Listing) { }
 
 @ObjectType()
-export class ListingsResponse extends ResponseArrayWithError(Listing) {}
+export class ListingsResponse extends ResponseArrayWithError(Listing) { }
 
 @ObjectType()
 export class PaginatedListingsResponse extends ResponseArrayWithError(
     PaginatedListings
-) {}
+) { }

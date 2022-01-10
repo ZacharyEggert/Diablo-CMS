@@ -24,6 +24,41 @@ export class ListingResolver {
         }
     }
 
+    // get all listings sorted by a given field
+    @Query(() => ListingsResponse)
+    public async listingsByField(
+        @Ctx() { em }: GQLContext,
+        @Arg('field', { defaultValue: "price" }) field: "price" | "title" | "imagesImport" | "make" | "status" | "category" | "createdAt" | "updatedAt",
+        @Arg('order', { defaultValue: 'DESC' }) order: 'ASC' | 'DESC'
+    ): Promise<ListingsResponse> {
+        try {
+            let mappedField: keyof Listing | 'createdAt' | 'updatedAt';
+            switch (field) {
+                case 'imagesImport':
+                    mappedField = 'reverbImagesImported';
+                    break;
+                case 'status':
+                    mappedField = 'reverbImagesImported';
+                    break;
+                case 'category':
+                    mappedField = 'categories';
+                    break;
+                default:
+                    mappedField = field;
+            }
+
+            const listings = await em.find(
+                Listing, {},
+                { orderBy: { [mappedField]: order ?? 'DESC' } }
+            );
+            return { data: listings };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
     // get a listing by id
     @Query(() => ListingResponse)
     public async listing(
