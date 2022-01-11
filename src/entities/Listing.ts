@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { DateType, Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { ReverbApiClient } from '@zacharyeggert/reverb-api';
 import { ReverbListing } from 'src/types';
 import { Field, ObjectType } from 'type-graphql';
@@ -82,13 +82,21 @@ export class Listing {
     @Property({ nullable: false })
     slug!: string;
 
-    @Field(() => Date)
-    @Property({ default: new Date().getDate() })
-    createdAt = new Date();
+    @Field(() => Boolean)
+    @Property({ nullable: false, default: false })
+    isSold: boolean = false;
+
+    @Field(() => Boolean)
+    @Property({ nullable: false, default: false })
+    isFeatured: boolean = false;
 
     @Field(() => Date)
-    @Property({ default: new Date().getDate() })
-    updatedAt = new Date();
+    @Property({ type: DateType })
+    createdAt: Date = new Date();
+
+    @Field(() => Date)
+    @Property({ onUpdate: () => new Date(), type: DateType })
+    updatedAt: Date = new Date();
 
     constructor(options?: Partial<Listing>) {
         if (options) {

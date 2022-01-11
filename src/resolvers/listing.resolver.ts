@@ -322,6 +322,105 @@ export class ListingResolver {
         }
     }
 
+    //update a listing
+    @Mutation(() => ListingResponse)
+    public async updateListing(
+        @Ctx() { em, req }: GQLContext,
+        @Arg('id', () => Int) id: number,
+        @Arg('title', { nullable: true }) title?: string,
+        @Arg('make', { nullable: true }) make?: string,
+        @Arg('model', { nullable: true }) model?: string,
+        @Arg('description', { nullable: true }) description?: string,
+        @Arg('price', { nullable: true }) price?: number,
+        @Arg('cost', { nullable: true }) cost?: number,
+        @Arg('imageUrls', () => [String], { nullable: true }) photos?: string[],
+        @Arg('submodel', { nullable: true }) submodel?: string,
+        @Arg('year', { nullable: true }) year?: string,
+        @Arg('finish', { nullable: true }) finish?: string,
+        @Arg('categories', () => [String], { nullable: true }) categories?: string[],
+        @Arg('salePrice', { nullable: true }) salePrice?: number,
+        @Arg('isSold', { nullable: true }) isSold?: boolean,
+        @Arg('isFeatured', { nullable: true }) isFeatured?: boolean,
+
+    ): Promise<ListingResponse> {
+
+        const { loggedIn } = req.session;
+
+        if (!loggedIn) {
+            return {
+                errors: [{
+                    message: 'Cannot update listings without logging in',
+                    field: 'LoggedIn',
+                    code: '403',
+                }],
+            };
+        }
+
+        try {
+            const listing = await em.findOne(Listing, { id });
+            if (!listing) {
+                return {
+                    errors: [
+                        {
+                            message: 'Listing not found',
+                            field: 'ID',
+                            code: '404',
+                        },
+                    ],
+                };
+            }
+            if (title) {
+                listing.title = title;
+            }
+            if (make) {
+                listing.make = make;
+            }
+            if (model) {
+                listing.model = model;
+            }
+            if (description) {
+                listing.description = description;
+            }
+            if (price) {
+                listing.price = price;
+            }
+            if (cost) {
+                listing.cost = cost;
+            }
+            if (photos) {
+                listing.photos = photos;
+            }
+            if (submodel) {
+                listing.submodel = submodel;
+            }
+            if (year) {
+                listing.year = year;
+            }
+            if (finish) {
+                listing.finish = finish;
+            }
+            if (categories) {
+                listing.categories = categories;
+            }
+            if (salePrice) {
+                listing.salePrice = salePrice;
+            }
+            if (isSold) {
+                listing.isSold = isSold;
+            }
+            if (isFeatured) {
+                listing.isFeatured = isFeatured;
+            }
+            await em.flush();
+            return { data: listing };
+        } catch (e) {
+            console.error(e);
+            const { message } = e as Error;
+            return { errors: [{ message, field: 'SQL' }] };
+        }
+    }
+
+
     //delete all listings
     @Mutation(() => BooleanWithError)
     public async deleteAllListings(
