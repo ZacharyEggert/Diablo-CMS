@@ -1,7 +1,46 @@
 import { Listing } from '@entities/Listing';
 import { GQLContext } from 'src/types';
-import { Arg, Ctx, Int, Mutation, Query, Resolver } from 'type-graphql';
+import {
+    Arg,
+    Ctx,
+    Field,
+    InputType,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from 'type-graphql';
 import { BooleanWithError, ListingResponse, ListingsResponse } from './types';
+
+//types
+
+@InputType()
+class ListingUpdateInput implements Partial<Listing> {
+    [key: string]: any;
+    @Field({ nullable: true }) title?: string;
+    @Field({ nullable: true }) make?: string;
+    @Field({ nullable: true }) model?: string;
+    @Field({ nullable: true }) description?: string;
+    @Field({ nullable: true }) price?: number;
+    @Field({ nullable: true }) cost?: number;
+    @Field(() => [String], { nullable: true }) photos?: string[];
+    @Field({ nullable: true }) submodel?: string;
+    @Field({ nullable: true }) year?: string;
+    @Field({ nullable: true }) finish?: string;
+    @Field(() => [String], { nullable: true }) categories?: string[];
+    @Field({ nullable: true }) salePrice?: number;
+    @Field({ nullable: true }) isSold?: boolean;
+    @Field({ nullable: true }) isFeatured?: boolean;
+    @Field({ nullable: true }) condition?: string;
+    @Field({ nullable: true }) createdAt?: Date;
+    @Field({ nullable: true }) updatedAt?: Date;
+    @Field({ nullable: true }) reverbId?: number;
+    @Field({ nullable: true }) reverbImagesImported?: boolean;
+    @Field({ nullable: true }) reverbSelfLink?: string;
+    @Field({ nullable: true }) reverbSku?: string;
+}
+
+// End of types
 
 @Resolver()
 export class ListingResolver {
@@ -28,7 +67,16 @@ export class ListingResolver {
     @Query(() => ListingsResponse)
     public async listingsByField(
         @Ctx() { em }: GQLContext,
-        @Arg('field', { defaultValue: "price" }) field: "price" | "title" | "imagesImport" | "make" | "status" | "category" | "createdAt" | "updatedAt",
+        @Arg('field', { defaultValue: 'price' })
+        field:
+            | 'price'
+            | 'title'
+            | 'imagesImport'
+            | 'make'
+            | 'status'
+            | 'category'
+            | 'createdAt'
+            | 'updatedAt',
         @Arg('order', { defaultValue: 'DESC' }) order: 'ASC' | 'DESC'
     ): Promise<ListingsResponse> {
         try {
@@ -48,7 +96,8 @@ export class ListingResolver {
             }
 
             const listings = await em.find(
-                Listing, {},
+                Listing,
+                {},
                 { orderBy: { [mappedField]: order ?? 'DESC' } }
             );
             return { data: listings };
@@ -245,16 +294,17 @@ export class ListingResolver {
         @Arg('year', { nullable: true }) year?: string,
         @Arg('finish', { nullable: true }) finish?: string
     ): Promise<ListingResponse> {
-
         const { loggedIn } = req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot create listings without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot create listings without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -286,16 +336,17 @@ export class ListingResolver {
         @Ctx() { em, req }: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<BooleanWithError> {
-
         const { loggedIn } = req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot delete listings without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot delete listings without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -327,32 +378,19 @@ export class ListingResolver {
     public async updateListing(
         @Ctx() { em, req }: GQLContext,
         @Arg('id', () => Int) id: number,
-        @Arg('title', { nullable: true }) title?: string,
-        @Arg('make', { nullable: true }) make?: string,
-        @Arg('model', { nullable: true }) model?: string,
-        @Arg('description', { nullable: true }) description?: string,
-        @Arg('price', { nullable: true }) price?: number,
-        @Arg('cost', { nullable: true }) cost?: number,
-        @Arg('imageUrls', () => [String], { nullable: true }) photos?: string[],
-        @Arg('submodel', { nullable: true }) submodel?: string,
-        @Arg('year', { nullable: true }) year?: string,
-        @Arg('finish', { nullable: true }) finish?: string,
-        @Arg('categories', () => [String], { nullable: true }) categories?: string[],
-        @Arg('salePrice', { nullable: true }) salePrice?: number,
-        @Arg('isSold', { nullable: true }) isSold?: boolean,
-        @Arg('isFeatured', { nullable: true }) isFeatured?: boolean,
-
+        @Arg('args', { nullable: true }) args: ListingUpdateInput
     ): Promise<ListingResponse> {
-
         const { loggedIn } = req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot update listings without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot update listings without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -369,48 +407,18 @@ export class ListingResolver {
                     ],
                 };
             }
-            if (title) {
-                listing.title = title;
-            }
-            if (make) {
-                listing.make = make;
-            }
-            if (model) {
-                listing.model = model;
-            }
-            if (description) {
-                listing.description = description;
-            }
-            if (price) {
-                listing.price = price;
-            }
-            if (cost) {
-                listing.cost = cost;
-            }
-            if (photos) {
-                listing.photos = photos;
-            }
-            if (submodel) {
-                listing.submodel = submodel;
-            }
-            if (year) {
-                listing.year = year;
-            }
-            if (finish) {
-                listing.finish = finish;
-            }
-            if (categories) {
-                listing.categories = categories;
-            }
-            if (salePrice) {
-                listing.salePrice = salePrice;
-            }
-            if (isSold) {
-                listing.isSold = isSold;
-            }
-            if (isFeatured) {
-                listing.isFeatured = isFeatured;
-            }
+
+            let updatedListing: Partial<Listing> = {};
+
+            Object.keys(args).forEach((key) => {
+                if (args[key] !== undefined) {
+                    updatedListing[key as keyof Listing] =
+                        args[key] || listing[key as keyof Listing];
+                }
+            });
+
+            listing.update(updatedListing);
+
             await em.flush();
             return { data: listing };
         } catch (e) {
@@ -420,22 +428,22 @@ export class ListingResolver {
         }
     }
 
-
     //delete all listings
     @Mutation(() => BooleanWithError)
     public async deleteAllListings(
         @Ctx() { em, req }: GQLContext
     ): Promise<BooleanWithError> {
-
         const { loggedIn } = req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot delete listings without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot delete listings without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 

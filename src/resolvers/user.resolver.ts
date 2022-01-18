@@ -13,16 +13,18 @@ import {
 export class UserResolver {
     @Query(() => UsersResponse)
     public async users(@Ctx() ctx: GQLContext): Promise<UsersResponse> {
-
         const { loggedIn } = ctx.req.session;
 
         if (!loggedIn) {
+            console.log(ctx.req.session);
             return {
-                errors: [{
-                    message: 'Cannot view users without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot view users without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -41,16 +43,17 @@ export class UserResolver {
         @Ctx() ctx: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<UserResponse> {
-
         const { loggedIn } = ctx.req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot view user without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot view user without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -58,11 +61,13 @@ export class UserResolver {
             const user = await ctx.em.findOne(User, id);
             if (!user) {
                 return {
-                    errors: [{
-                        message: 'User not found',
-                        field: 'ID',
-                        code: '404',
-                    }],
+                    errors: [
+                        {
+                            message: 'User not found',
+                            field: 'ID',
+                            code: '404',
+                        },
+                    ],
                 };
             }
             return { data: user };
@@ -78,16 +83,17 @@ export class UserResolver {
         @Ctx() ctx: GQLContext,
         @Arg('id', () => Int) id: number
     ): Promise<BooleanWithError> {
-
         const { loggedIn } = ctx.req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot delete user without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot delete user without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
@@ -112,28 +118,33 @@ export class UserResolver {
         @Arg('password') password: string,
         @Arg('email') email: string
     ): Promise<UserResponse> {
-
         const { loggedIn } = ctx.req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot create user without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot create user without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
         try {
-            const userExists = await ctx.em.findOne(User, { username: username.toLowerCase() });
+            const userExists = await ctx.em.findOne(User, {
+                username: username.toLowerCase(),
+            });
             if (userExists) {
                 return {
-                    errors: [{
-                        message: 'User already exists',
-                        field: 'Username',
-                        code: '400',
-                    }],
+                    errors: [
+                        {
+                            message: 'User already exists',
+                            field: 'Username',
+                            code: '400',
+                        },
+                    ],
                 };
             }
 
@@ -155,40 +166,44 @@ export class UserResolver {
 
     @Query(() => UserResponse)
     public async me(@Ctx() ctx: GQLContext): Promise<UserResponse> {
-
         const { loggedIn } = ctx.req.session;
 
         if (!loggedIn) {
             return {
-                errors: [{
-                    message: 'Cannot view user without logging in',
-                    field: 'LoggedIn',
-                    code: '403',
-                }],
+                errors: [
+                    {
+                        message: 'Cannot view user without logging in',
+                        field: 'LoggedIn',
+                        code: '403',
+                    },
+                ],
             };
         }
 
         try {
-
             if (!ctx.req.session || !ctx.req.session!.userId) {
                 console.error('No session found', ctx.req.session);
                 return {
-                    errors: [{
-                        message: 'User not found',
-                        field: 'ID',
-                        code: '404',
-                    }],
+                    errors: [
+                        {
+                            message: 'User not found',
+                            field: 'ID',
+                            code: '404',
+                        },
+                    ],
                 };
             }
 
             const user = await ctx.em.findOne(User, ctx.req.session.userId);
             if (!user) {
                 return {
-                    errors: [{
-                        message: 'User not found',
-                        field: 'ID',
-                        code: '404',
-                    }],
+                    errors: [
+                        {
+                            message: 'User not found',
+                            field: 'ID',
+                            code: '404',
+                        },
+                    ],
                 };
             }
             return { data: user };
@@ -206,29 +221,33 @@ export class UserResolver {
         @Arg('password') password: string
     ): Promise<UserResponse> {
         try {
-
-            const user = await ctx.em.findOne(User, { username: username.toLowerCase() });
+            const user = await ctx.em.findOne(User, {
+                username: username.toLowerCase(),
+            });
             if (!user) {
                 return {
-                    errors: [{
-                        message: 'User not found',
-                        field: 'ID',
-                        code: '404',
-                    }],
+                    errors: [
+                        {
+                            message: 'User not found',
+                            field: 'ID',
+                            code: '404',
+                        },
+                    ],
                 };
             }
 
             const isValid = await argon2.verify(user.password, password);
             if (!isValid) {
                 return {
-                    errors: [{
-                        message: 'Invalid password',
-                        field: 'Password',
-                        code: '400',
-                    }],
+                    errors: [
+                        {
+                            message: 'Invalid password',
+                            field: 'Password',
+                            code: '400',
+                        },
+                    ],
                 };
             }
-
 
             ctx.req.session.userId = user.id;
             ctx.req.session.loggedIn = true;
@@ -247,11 +266,13 @@ export class UserResolver {
                 if (err) {
                     console.error(err);
                     return {
-                        errors: [{
-                            message: 'Error logging out',
-                            field: 'Logout',
-                            code: '500',
-                        }],
+                        errors: [
+                            {
+                                message: 'Error logging out',
+                                field: 'Logout',
+                                code: '500',
+                            },
+                        ],
                     };
                 }
             });
@@ -269,16 +290,21 @@ export class UserResolver {
     public async createTestUser(
         @Ctx() ctx: GQLContext
     ): Promise<BooleanWithError> {
-
         const hashedPassword = await argon2.hash('password');
 
         try {
-            const oldTestUser = await ctx.em.findOne(User, { username: 'admin' });
+            const oldTestUser = await ctx.em.findOne(User, {
+                username: 'admin',
+            });
             if (oldTestUser) {
                 await ctx.em.removeAndFlush(oldTestUser);
             }
 
-            const testUser = ctx.em.create(User, { email: 'test@gmail.com', username: 'admin', password: hashedPassword });
+            const testUser = ctx.em.create(User, {
+                email: 'test@gmail.com',
+                username: 'admin',
+                password: hashedPassword,
+            });
             await ctx.em.persistAndFlush(testUser);
 
             return { data: true };
@@ -288,5 +314,4 @@ export class UserResolver {
             return { errors: [{ message, field: 'SQL' }] };
         }
     }
-
 }
